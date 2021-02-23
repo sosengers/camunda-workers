@@ -5,11 +5,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import DatabaseError
 
 from model.flight import Flight
-
-import logging
-
+from ...logger import get_logger
 
 def save_last_minute_offers(task: ExternalTask) -> TaskResult:
+    logger = get_logger()
+    logger.info("save_last_minute_offers")
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
     print(task.get_variable("offers"))
@@ -22,8 +22,9 @@ def save_last_minute_offers(task: ExternalTask) -> TaskResult:
     try:
         session.add_all(flights)
         session.commit()
+        logger.info("Riuscito a salvare le offerte")
     except DatabaseError:
-        logging.error('ERROR: Error inserting rows in the database!')
+        logger.error('Inserting rows in the database failed')
         return task.bpmn_error(error_code='offer_saving_failed',
                                error_message='Error inserting rows in the database')
 

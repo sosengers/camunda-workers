@@ -1,4 +1,3 @@
-import logging
 from concurrent.futures.thread import ThreadPoolExecutor
 
 from camunda.external_task.external_task_worker import ExternalTaskWorker
@@ -9,7 +8,7 @@ from workers.last_minute_notifications.tasks import TASKS as last_minute_notific
 from model.flight import Base
 from model.base import create_sql_engine
 
-logger = logging.getLogger(__name__)
+from .logger import get_logger
 
 # configuration for the Client
 default_config = {
@@ -20,15 +19,6 @@ default_config = {
     "retryTimeout": 5000,
     "sleepSeconds": 30
 }
-
-
-def setup_logger():
-    logger.setLevel(logging.DEBUG)
-    logger.propagate = False
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
-    ch.setFormatter(logging.Formatter("%(threadName)s [%(levelname)s]: %(message)s"))
-    logger.addHandler(ch)
 
 
 def main():
@@ -47,6 +37,6 @@ def main():
 
 
 if __name__ == '__main__':
-    setup_logger()
-    logger.info("Service running")
+    logger = get_logger()
+    logger.info("Workers running")
     main()
