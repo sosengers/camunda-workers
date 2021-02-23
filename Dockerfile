@@ -1,12 +1,14 @@
 FROM python:3.8.6
 
-RUN mkdir /app
-WORKDIR /app
-COPY ./requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-COPY ./workers workers/
-COPY ./model model/
-COPY ./main.py main.py
+COPY requirements.txt /usr/src/app/
 
-CMD ["python3", "main.py"]
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+COPY . /usr/src/app
+
+ENTRYPOINT ["python3"]
+
+CMD ["-m", "camundaworkers"]

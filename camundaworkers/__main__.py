@@ -1,14 +1,14 @@
+#!/usr/bin/env python3
+
 from concurrent.futures.thread import ThreadPoolExecutor
 
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 
-from workers.register_user_interest.tasks import TASKS as register_user_interest_TASKS
-from workers.last_minute_notifications.tasks import TASKS as last_minute_notifications_TASKS
+from camundaworkers.workers.register_user_interest.tasks import TASKS as register_user_interest_TASKS
+from camundaworkers.workers.last_minute_notifications.tasks import TASKS as last_minute_notifications_TASKS
 
-from model.flight import Base
-from model.base import create_sql_engine
-
-from .logger import get_logger
+from .model.flight import Base
+from .model.base import create_sql_engine
 
 # configuration for the Client
 default_config = {
@@ -37,6 +37,4 @@ def main():
 
 
 if __name__ == '__main__':
-    logger = get_logger()
-    logger.info("Workers running")
     main()

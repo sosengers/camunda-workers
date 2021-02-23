@@ -10,3 +10,9 @@ def get_logger():
     ch.setFormatter(logging.Formatter("%(threadName)s [%(levelname)s]: %(message)s"))
     logger.addHandler(ch)
     return logger
+
+class Logger:
+    logger = get_logger()
+
+    def __init__(self):
+

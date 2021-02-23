@@ -3,13 +3,9 @@ import base64
 import javaobj.v2 as javaobj
 import json
 
-from ...logger import get_logger
 
 
 def check_offers_presence(task: ExternalTask) -> TaskResult:
-    logger = get_logger()
-    logger.info("check_offers_presence")
-
     # logging.error(task.get_variables())
 
     # task.get_variable('user') returns a marshalled base64 version of a java.util.HashMap
@@ -28,9 +24,5 @@ def check_offers_presence(task: ExternalTask) -> TaskResult:
     user = deserialized_user[4].replace('\t', '').replace('\'', '')
 
     user_interests = json.loads(deserialized_user[6].replace('\t', '').replace('\'', '\"'))
-
-    logger.info(f"User {user}")
-
-    logger.info(f"Interests: {user_interests}")
 
     return task.complete(global_variables={'offer_code': 'giovanni'})
