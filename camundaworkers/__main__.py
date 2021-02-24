@@ -10,6 +10,8 @@ from camundaworkers.workers.last_minute_notifications.tasks import TASKS as last
 from .model.flight import Base
 from .model.base import create_sql_engine
 
+from camundaworkers.logger import get_logger
+
 # configuration for the Client
 default_config = {
     "maxTasks": 1,
@@ -22,6 +24,8 @@ default_config = {
 
 
 def main():
+    logger = get_logger()
+    logger.info("Workers started")
     BASE_URL = "http://camunda_acmesky:8080/engine-rest"
 
     TOPICS = register_user_interest_TASKS + last_minute_notifications_TASKS

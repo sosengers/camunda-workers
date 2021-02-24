@@ -2,7 +2,13 @@ from camunda.external_task.external_task import ExternalTask, TaskResult
 import json
 import pika
 
+from camundaworkers.logger import get_logger
+
+
 def send_result(task: ExternalTask) -> TaskResult:
+    logger = get_logger()
+    logger.info("send_result")
+
 
     operation_result = task.get_variable("operation_result")
     interest = json.loads(task.get_variable("interest"))

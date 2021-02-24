@@ -1,8 +1,9 @@
 import logging
+from threading import get_ident
 
 
 def get_logger():
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(str(get_ident()))
     logger.setLevel(logging.DEBUG)
     logger.propagate = False
     ch = logging.StreamHandler()
@@ -10,9 +11,3 @@ def get_logger():
     ch.setFormatter(logging.Formatter("%(threadName)s [%(levelname)s]: %(message)s"))
     logger.addHandler(ch)
     return logger
-
-class Logger:
-    logger = get_logger()
-
-    def __init__(self):
-
