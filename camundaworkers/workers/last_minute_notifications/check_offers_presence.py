@@ -2,8 +2,10 @@ from camunda.external_task.external_task import ExternalTask, TaskResult
 import base64
 import javaobj.v2 as javaobj
 import json
+from secrets import token_urlsafe
 
 from camundaworkers.logger import get_logger
+from camundaworkers.utils import *
 
 
 def check_offers_presence(task: ExternalTask) -> TaskResult:
@@ -26,4 +28,22 @@ def check_offers_presence(task: ExternalTask) -> TaskResult:
 
     user_interests = json.loads(deserialized_user[6].replace('\t', '').replace('\'', '\"'))
 
-    return task.complete(global_variables={'offer_code': 'giovanni'})
+    offers = json.loads(task.get_variable("offers"))
+
+    offer_codes = []
+    for interest in user_interests:
+        outbound_flights = list(filter(lambda flight: departure_match_offer_interest(flight, interest), offers))
+        comeback_flights = list(filter(lambda flight: comeback_match_offer_interest(flight, interest), offers))
+        #logger.info(f"outbound_flights: {outbound_flights}")
+        #logger.info(f"comeback_flights: {comeback_flights}")
+
+        min_outbound_flight = min(outbound_flights, key=lambda flight: float(flight.get("cost")))
+        min_comeback_flight = min(comeback_flights, key=lambda flight: float(flight.get("cost")))
+        #logger.info(f"MIN  outbound_flights: {min_outbound_flight}")
+        #logger.info(f"MIN comeback_flights: {min_comeback_flight}")
+
+        if (float(min_outbound_flight.get("cost")) + float(min_comeback_flight.get("cost"))) <= float(interest.get("max_price")):
+            offer_codes.append(str(token_urlsafe(8)))
+
+    logger.info(f"Offer codes: {offer_codes}")
+    return task.complete(global_variables={'offer_codes': json.dumps(offer_codes)})
