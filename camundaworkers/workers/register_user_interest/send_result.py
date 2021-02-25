@@ -9,7 +9,6 @@ def send_result(task: ExternalTask) -> TaskResult:
     logger = get_logger()
     logger.info("send_result")
 
-
     operation_result = task.get_variable("operation_result")
     interest = json.loads(task.get_variable("interest"))
     pg_username = interest.get("prontogram_username")
