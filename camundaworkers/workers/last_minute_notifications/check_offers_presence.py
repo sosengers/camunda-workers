@@ -32,6 +32,7 @@ def check_offers_presence(task: ExternalTask) -> TaskResult:
 
     user = deserialized_user[4].replace('\t', '').replace('\'', '')
 
+    prontogram_username = str(deserialized_user[4].replace('\t', ''))
     user_interests = json.loads(deserialized_user[6].replace('\t', '').replace('\'', '\"'))
 
     offer_codes = []
@@ -65,4 +66,4 @@ def check_offers_presence(task: ExternalTask) -> TaskResult:
 
     session.commit()
     logger.info(f"Offer codes: {offer_codes}")
-    return task.complete(global_variables={'offer_codes': json.dumps(offer_codes)})
+    return task.complete(global_variables={'offer_codes': json.dumps(offer_codes), 'prontogram_username': prontogram_username})
