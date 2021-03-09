@@ -24,7 +24,7 @@ def save_last_minute_offers(task: ExternalTask) -> TaskResult:
         session.commit()
         logger.info(f"Added {len(flights)} flights to acmesky_db")
     except DatabaseError:
-        logger.warn(f"Database errore while inserting {len(flights)}")
+        logger.warn(f"Database error while inserting {len(flights)}")
         return task.bpmn_error(error_code='offer_saving_failed',
                                error_message='Error inserting rows in the database')
 
