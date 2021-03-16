@@ -9,7 +9,7 @@ class Flight(Base):
     __tablename__ = 'flights'
 
     @staticmethod
-    def from_json(flight_dict: dict):
+    def from_json(flight_dict: dict, flight_company: str):
         return Flight(
             flight_id=flight_dict.get('flight_id'),
             departure_airport_code=flight_dict.get('departure_airport_code'),
@@ -17,7 +17,7 @@ class Flight(Base):
             cost=flight_dict.get('cost'),
             departure_datetime=flight_dict.get('departure_datetime'),
             arrival_datetime=flight_dict.get('arrival_datetime'),
-            flight_company_name="alitalia"  # TODO: Aggiungere compagnia aerea
+            flight_company_name=flight_company
         )
 
     id = Column(Integer, primary_key=True, autoincrement=True)

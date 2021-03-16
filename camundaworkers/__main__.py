@@ -6,6 +6,7 @@ from camunda.external_task.external_task_worker import ExternalTaskWorker
 
 from camundaworkers.workers.register_user_interest.tasks import TASKS as register_user_interest_TASKS
 from camundaworkers.workers.last_minute_notifications.tasks import TASKS as last_minute_notifications_TASKS
+from camundaworkers.workers.daily_flight_check.tasks import TASKS as daily_fligh_check_TASKS
 
 from .model.flight import Base
 from .model.base import create_sql_engine
@@ -28,7 +29,7 @@ def main():
     logger.info("Workers started")
     BASE_URL = "http://camunda_acmesky:8080/engine-rest"
 
-    TOPICS = register_user_interest_TASKS + last_minute_notifications_TASKS
+    TOPICS = register_user_interest_TASKS + last_minute_notifications_TASKS + daily_fligh_check_TASKS
 
     # Setup PostgreSQL
     Base.metadata.create_all(create_sql_engine())

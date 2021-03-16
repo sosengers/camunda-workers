@@ -34,4 +34,5 @@ def retrieve_user_interests(task: ExternalTask) -> TaskResult:
         for i in u.get('interests'):
             i['max_price'] = str(i['max_price']) # necessary since Camunda returns Java objects to be deserialized
 
+    logger.info(f"There are {len(users)} users to be checked")
     return task.complete(global_variables={"users": users})
