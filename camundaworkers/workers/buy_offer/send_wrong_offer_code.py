@@ -10,24 +10,21 @@ def send_wrong_offer_code(task: ExternalTask) -> TaskResult:
     logger = get_logger()
     logger.info("send_wrong_offer_code")
 
-    offer_purchase_data = OfferPurchaseData.from_dict(
-        str(task.get_variable("offer_purchase_data"))
-    )
+    user_communication_code = str(task.get_variable("user_communication_code"))
 
     connection = pika.BlockingConnection(pika.ConnectionParameters("acmesky_mq"))
     channel = connection.channel()
 
-    queue_name = hash(offer_purchase_data)
-    channel.queue_declare(queue=queue_name, durable=True)
+    channel.queue_declare(queue=user_communication_code, durable=True)
 
     error = PurchaseProcessInformation(
-        message=f"Il codice offerta {offer_purchase_data.offer_code} non è valido.",
+        message=f"Il codice offerta inserito non è valido.",
         is_error=True,
     )
 
     channel.basic_publish(
         exchange="",
-        routing_key=queue_name,
+        routing_key=user_communication_code,
         body=bytes(json.dumps(error.to_dict()), "utf-8"),
         properties=pika.BasicProperties(delivery_mode=2),
     )

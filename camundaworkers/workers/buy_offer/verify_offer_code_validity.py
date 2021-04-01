@@ -25,4 +25,4 @@ def verify_offer_code_validity(task: ExternalTask) -> TaskResult:
 
     logger.info(f"{affected_rows} match was found for the given offer code.")
     session.commit()
-    return task.complete(global_variables={'offer_code_validity': True})
+    return task.complete(global_variables={'offer_code_validity': True, 'user_communication_code': hash(offer_purchase_data)})
