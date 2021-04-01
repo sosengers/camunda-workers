@@ -45,3 +45,15 @@ class OfferMatch(Base):
     comeback_flight = relationship("Flight", primaryjoin=comeback_flight_id == Flight.id)
 
     blocked = Column(Boolean, default=False)
+
+class PaymentTransaction(Base):
+    """In :class:`PaymentTransaction`, field :attr:`transaction_id` is an UUID,
+    therefore a string in the form: 8-4-4-4-12,
+    where 8, 4, 12 are the lengths of the strings that compose it.
+    """
+    
+    __tablename__ = 'paymenttxs'
+
+    transaction_id = Column(String(36), primary_key=True)
+
+    status = Column(Boolean, default=False)
