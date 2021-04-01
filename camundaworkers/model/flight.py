@@ -57,3 +57,7 @@ class PaymentTransaction(Base):
     transaction_id = Column(String(36), primary_key=True)
 
     status = Column(Boolean, default=False)
+
+    @staticmethod
+    def from_dict(data):
+        return PaymentTransaction(transaction_id=data.get("transaction_id"), status=data.get("status"))

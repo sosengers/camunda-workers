@@ -7,7 +7,7 @@ from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 
 import json
 import requests
-import environ
+from os import environ
 
 
 def payment_request(task: ExternalTask) -> TaskResult:
@@ -51,7 +51,7 @@ def payment_request(task: ExternalTask) -> TaskResult:
     payment_tx = PaymentTransaction(
         transaction_id=payment_creation_response.json().get('transaction_id')
         )
-        
+
     session.add(payment_tx)
     session.commit()
 
