@@ -3,7 +3,7 @@ from camundaworkers.logger import get_logger
 from sqlalchemy.orm.session import sessionmaker
 from camundaworkers.logger import get_logger
 from camundaworkers.model.base import create_sql_engine
-from camundaworkers.model.offermatch import OfferMatch
+from camundaworkers.model.flight import OfferMatch
 
 
 def rehabilitation_offer_code(task: ExternalTask) -> TaskResult:
