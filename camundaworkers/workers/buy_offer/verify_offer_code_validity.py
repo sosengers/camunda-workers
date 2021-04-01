@@ -1,3 +1,4 @@
+from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 from camundaworkers.model.offermatch import OfferMatch
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from sqlalchemy.orm.session import sessionmaker
@@ -9,7 +10,9 @@ def verify_offer_code_validity(task: ExternalTask) -> TaskResult:
     logger = get_logger()
     logger.info("verify_offer_code_validity")
 
-    offer_code = str(task.get_variable("offer_code"))
+    offer_purchase_data = OfferPurchaseData.from_dict(str(task.get_variable("offer_purchase_data")))
+
+    offer_code = offer_purchase_data.offer_code
 
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()

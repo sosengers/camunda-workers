@@ -19,7 +19,7 @@ def save_offers(task: ExternalTask) -> TaskResult:
     session = Session()
 
     company_url = task.get_variable('company')
-    today_flights = [Flight.from_json(flight_json, company_url) for flight_json in loads(task.get_variable('offers'))]
+    today_flights = [Flight.from_dict(flight_json, company_url) for flight_json in loads(task.get_variable('offers'))]
 
     try:
         session.add_all(today_flights)

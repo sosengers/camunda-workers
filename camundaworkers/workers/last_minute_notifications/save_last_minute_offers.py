@@ -17,7 +17,7 @@ def save_last_minute_offers(task: ExternalTask) -> TaskResult:
     session = Session()
     flights_dict = json.loads(task.get_variable("offers"))
 
-    flights = [Flight.from_json(f, "URL DA CAMBIARE") for f in flights_dict] # TODO: capire quale compagnia aerea mi ha contattato
+    flights = [Flight.from_dict(f, "URL DA CAMBIARE") for f in flights_dict] # TODO: capire quale compagnia aerea mi ha contattato
 
     try:
         session.add_all(flights)

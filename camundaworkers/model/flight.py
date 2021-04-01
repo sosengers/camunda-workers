@@ -8,9 +8,9 @@ class Flight(Base):
     __tablename__ = 'flights'
 
     @staticmethod
-    def from_json(flight_dict: dict, flight_company: str):
+    def from_dict(flight_dict: dict, flight_company: str):
         return Flight(
-            flight_id=flight_dict.get('flight_id'),
+            flight_code=flight_dict.get('flight_id'), # TODO sostituire nel JSON la chiave flight_id con flight_code
             departure_airport_code=flight_dict.get('departure_airport_code'),
             arrival_airport_code=flight_dict.get('arrival_airport_code'),
             cost=flight_dict.get('cost'),
@@ -20,7 +20,7 @@ class Flight(Base):
         )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    flight_id = Column(String(10))
+    flight_code = Column(String(10))
     departure_airport_code = Column(String(3))
     arrival_airport_code = Column(String(3))
     cost = Column(Float)
@@ -29,5 +29,5 @@ class Flight(Base):
     flight_company_name = Column(String(50))
 
     __table_args__ = (
-        UniqueConstraint('flight_id', 'departure_datetime'),
+        UniqueConstraint('flight_code', 'departure_datetime'),
     )
