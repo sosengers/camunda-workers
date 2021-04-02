@@ -1,3 +1,4 @@
+from camundaworkers.model.purchase_process_information import PurchaseProcessInformation
 from camundaworkers.model.flight import Flight, OfferMatch, PaymentTransaction
 from camundaworkers.model.base import create_sql_engine
 from camunda.external_task.external_task import ExternalTask, TaskResult
@@ -5,6 +6,7 @@ from sqlalchemy.orm.session import sessionmaker
 from camundaworkers.logger import get_logger
 from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 
+import pika
 import json
 import requests
 from os import environ
@@ -13,6 +15,8 @@ from os import environ
 def payment_request(task: ExternalTask) -> TaskResult:
     logger = get_logger()
     logger.info("payment_request")
+
+    user_communication_code = str(task.get_variable("user_communication_code"))
 
     offer_purchase_data = OfferPurchaseData.from_dict(
         json.loads(task.get_variable("offer_purchase_data"))
@@ -46,13 +50,31 @@ def payment_request(task: ExternalTask) -> TaskResult:
         "PAYMENT_PROVIDER_URL", "http://payment_provider_backend:8080"
     )
 
-    payment_creation_response = requests.post(payment_provider_url + "/payments/request", json=payment_request)
+    payment_creation_response = requests.post(payment_provider_url + "/payments/request", json=payment_request).json()
 
     payment_tx = PaymentTransaction(
-        transaction_id=payment_creation_response.json().get('transaction_id')
+        transaction_id=payment_creation_response.get('transaction_id')
         )
 
     session.add(payment_tx)
     session.commit()
+
+    connection = pika.BlockingConnection(pika.ConnectionParameters("acmesky_mq"))
+    channel = connection.channel()
+
+    channel.queue_declare(queue=user_communication_code, durable=True)
+
+    purchase_url = PurchaseProcessInformation(
+        message=f"Puoi procedere con il pagamento cliccando <a href=\"{payment_creation_response.get('redirect_page')}\">qui</a>."
+    )
+
+    channel.basic_publish(
+        exchange="",
+        routing_key=user_communication_code,
+        body=bytes(json.dumps(purchase_url.to_dict()), "utf-8"),
+        properties=pika.BasicProperties(delivery_mode=2),
+    )
+
+    connection.close()
 
     return task.complete()
