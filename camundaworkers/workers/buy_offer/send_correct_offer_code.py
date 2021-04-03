@@ -10,12 +10,13 @@ def send_correct_offer_code(task: ExternalTask) -> TaskResult:
     logger.info("send_correct_offer_code")
 
     user_communication_code = str(task.get_variable("user_communication_code"))
-
-    connection = pika.BlockingConnection(pika.ConnectionParameters("acmesky_mq"))
+    logger.info("Connecting to rabbit...")
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
+    logger.info("Creata connesione con rabbit")
     channel = connection.channel()
-
+    logger.info("Creato canale")
     channel.queue_declare(queue=user_communication_code, durable=True)
-
+    logger.info("Dichiarata coda")
     success = PurchaseProcessInformation(
         message=f"Il codice offerta inserito è valido."
     )
@@ -26,6 +27,7 @@ def send_correct_offer_code(task: ExternalTask) -> TaskResult:
         body=bytes(json.dumps(success.to_dict()), "utf-8"),
         properties=pika.BasicProperties(delivery_mode=2),
     )
+    logger.info("Mandato messaggio")
 
     connection.close()
 

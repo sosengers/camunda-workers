@@ -11,7 +11,7 @@ class Flight(Base):
     @staticmethod
     def from_dict(flight_dict: dict, flight_company: str):
         return Flight(
-            flight_code=flight_dict.get('flight_id'), # TODO sostituire nel JSON la chiave flight_id con flight_code
+            flight_code=flight_dict.get('flight_id'),  # TODO sostituire nel JSON la chiave flight_id con flight_code
             departure_airport_code=flight_dict.get('departure_airport_code'),
             arrival_airport_code=flight_dict.get('arrival_airport_code'),
             cost=flight_dict.get('cost'),
@@ -33,6 +33,7 @@ class Flight(Base):
         UniqueConstraint('flight_code', 'departure_datetime'),
     )
 
+
 class OfferMatch(Base):
     __tablename__ = 'offermatches'
 
@@ -46,12 +47,13 @@ class OfferMatch(Base):
 
     blocked = Column(Boolean, default=False)
 
+
 class PaymentTransaction(Base):
     """In :class:`PaymentTransaction`, field :attr:`transaction_id` is an UUID,
     therefore a string in the form: 8-4-4-4-12,
     where 8, 4, 12 are the lengths of the strings that compose it.
     """
-    
+
     __tablename__ = 'paymenttxs'
 
     transaction_id = Column(String(36), primary_key=True)

@@ -6,6 +6,7 @@ from camundaworkers.logger import get_logger
 
 import json
 
+
 def verify_payment_status(task: ExternalTask) -> TaskResult:
     logger = get_logger()
     logger.info("verify_payment_status")
@@ -18,11 +19,13 @@ def verify_payment_status(task: ExternalTask) -> TaskResult:
 
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
-    
-    affected_rows = session.query(PaymentTransaction).filter(PaymentTransaction.transaction_id == offer_purchase_data.transaction_id).update({"status": True}, synchronize_session="fetch")
+
+    affected_rows = session.query(PaymentTransaction).filter(
+        PaymentTransaction.transaction_id == offer_purchase_data.transaction_id).update({"status": True},
+                                                                                        synchronize_session="fetch")
     # TODO verificare se è necessario, forse è dead code
     if affected_rows < 1:
-        session.rollback() 
+        session.rollback()
         logger.error(f"{affected_rows} transactions were updated.")
         return task.complete(global_variables={'payment_status_validity': False})
 

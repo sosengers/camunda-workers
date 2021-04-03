@@ -1,6 +1,3 @@
-
-
-from camundaworkers.workers.buy_offer.verify_offer_code_validity import verify_offer_code_validity
 from camundaworkers.workers.buy_offer.payment_request import payment_request
 from camundaworkers.workers.buy_offer.rehabilitation_offer_code import rehabilitation_offer_code
 from camundaworkers.workers.buy_offer.send_correct_offer_code import send_correct_offer_code

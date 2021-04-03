@@ -20,6 +20,7 @@ def verify_offer_code_validity(task: ExternalTask) -> TaskResult:
     session = Session()
 
     user_communication_code = str(hash(offer_purchase_data))
+    #logger.info(f"DATA: {offer_purchase_data.to_dict()}")
     affected_rows = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code).update({"blocked": True}, synchronize_session="fetch")
     if affected_rows < 1:
         session.rollback() # TODO verificare se è necessario

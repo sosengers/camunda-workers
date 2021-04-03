@@ -14,6 +14,7 @@ from .model.flight import Base
 from .model.base import create_sql_engine
 
 from camundaworkers.logger import get_logger
+import pika
 
 # configuration for the Client
 default_config = {
@@ -37,13 +38,16 @@ def main():
     Base.metadata.create_all(create_sql_engine())
     Base.metadata.create_all(create_sql_engine())
 
+    logger.info("Connecting to rabbit")
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
+    connection.close()
+    logger.info("Connected to rabbit was successful")
     executor = ThreadPoolExecutor(max_workers=len(TOPICS), thread_name_prefix="ACMESky-Backend")
     for index, topic_handler in enumerate(TOPICS):
         topic = topic_handler[0]
         handler_func = topic_handler[1]
         executor.submit(ExternalTaskWorker(worker_id=index, base_url=BASE_URL, config=default_config).subscribe, topic,
                         handler_func)
-
 
 if __name__ == '__main__':
     main()

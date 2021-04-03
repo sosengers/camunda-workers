@@ -27,11 +27,8 @@ def payment_request(task: ExternalTask) -> TaskResult:
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
 
-    offer_match = (
-        session.query(OfferMatch)
-        .filter(OfferMatch.offer_code == offer_code, OfferMatch.blocked == True)
-        .first()
-    )
+    offer_match = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code,
+                                                   OfferMatch.blocked == True).first()
 
     # affected_rows == 1 per precondizione.
     outbound_flight_id = offer_match.outbound_flight_id
@@ -46,27 +43,19 @@ def payment_request(task: ExternalTask) -> TaskResult:
         "description": f"Il costo totale dell'offerta è: € {outbound_flight.cost + comeback_flight.cost}. I biglietti verranno acquistati dalla compagnia {outbound_flight.flight_company_name}.",
     }
 
-    payment_provider_url = environ.get(
-        "PAYMENT_PROVIDER_URL", "http://payment_provider_backend:8080"
-    )
+    payment_provider_url = environ.get("PAYMENT_PROVIDER_URL", "http://payment_provider_backend:8080")
 
     payment_creation_response = requests.post(payment_provider_url + "/payments/request", json=payment_request).json()
 
-    payment_tx = PaymentTransaction(
-        transaction_id=payment_creation_response.get('transaction_id')
-        )
-
+    payment_tx = PaymentTransaction(transaction_id=payment_creation_response.get('transaction_id'))
     session.add(payment_tx)
     session.commit()
 
-    connection = pika.BlockingConnection(pika.ConnectionParameters("acmesky_mq"))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
     channel = connection.channel()
-
     channel.queue_declare(queue=user_communication_code, durable=True)
 
-    purchase_url = PurchaseProcessInformation(
-        message=f"Puoi procedere con il pagamento cliccando <a href=\"{payment_creation_response.get('redirect_page')}\">qui</a>."
-    )
+    purchase_url = PurchaseProcessInformation(message=str(payment_creation_response.get('redirect_page')))
 
     channel.basic_publish(
         exchange="",

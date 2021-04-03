@@ -5,7 +5,7 @@ class Address:
         self.city = city
         self.zip_code = zip_code
         self.country = country
-    
+
     @staticmethod
     def from_dict(data: dict):
         return Address(
@@ -16,7 +16,6 @@ class Address:
             country=data.get('country')
         )
 
-        
     def __key(self):
         return (self.street, self.number, self.city, self.zip_code, self.country)
 
@@ -27,3 +26,12 @@ class Address:
         if isinstance(other, Address):
             return self.__key() == other.__key()
         return NotImplemented
+
+    def to_dict(self):
+        return {
+            "street": self.street,
+            "number": self.number,
+            "city": self.city,
+            "zip_code": self.zip_code,
+            "country": self.country
+        }
