@@ -7,6 +7,7 @@ from camundaworkers.logger import get_logger
 from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 
 import pika
+from redis import Redis
 import json
 import requests
 from os import environ
@@ -51,6 +52,11 @@ def payment_request(task: ExternalTask) -> TaskResult:
     session.add(payment_tx)
     session.commit()
 
+    redis_connection = Redis(host="acmesky_redis", port=6379, db=0)
+    redis_connection.set(payment_creation_response.get('transaction_id'), task.get_process_instance_id())
+    redis_connection.close()
+
+    logger.info(f"user comunication code: {user_communication_code}")
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
     channel = connection.channel()
     channel.queue_declare(queue=user_communication_code, durable=True)
