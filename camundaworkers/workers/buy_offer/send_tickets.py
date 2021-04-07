@@ -1,9 +1,14 @@
 from camunda.external_task.external_task import ExternalTask, TaskResult
+from sqlalchemy.orm.session import sessionmaker
+from camundaworkers.model.base import create_sql_engine
 
 from camundaworkers.logger import get_logger
 
 import json
 import pika
+
+from camundaworkers.model.flight import OfferMatch
+from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 
 
 def send_tickets(task: ExternalTask) -> TaskResult:
@@ -27,4 +32,14 @@ def send_tickets(task: ExternalTask) -> TaskResult:
 
     connection.close()
 
+    Session = sessionmaker(bind=create_sql_engine())
+    session = Session()
+    offer_purchase_data = OfferPurchaseData.from_dict(json.loads(task.get_variable("offer_purchase_data")))
+    session.query(OfferMatch).filter(OfferMatch.offer_code == offer_purchase_data.offer_code).update({"blocked": False},
+                                                                                                     synchronize_session="fetch")
+    """ TODO:
+    to_delete = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_purchase_data.offer_code)
+    session.delete(to_delete)
+    session.commit()
+    """
     return task.complete()

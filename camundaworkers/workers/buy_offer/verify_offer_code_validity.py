@@ -20,10 +20,14 @@ def verify_offer_code_validity(task: ExternalTask) -> TaskResult:
     session = Session()
 
     user_communication_code = str(hash(offer_purchase_data))
-    #logger.info(f"DATA: {offer_purchase_data.to_dict()}")
+    match = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code, OfferMatch.blocked == True)
+    if len(match) == 1:
+        logger.error(f"Offer code already in use.")
+        return task.complete(global_variables={'offer_code_validity': False, 'user_communication_code': user_communication_code})
+
     affected_rows = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code).update({"blocked": True}, synchronize_session="fetch")
     if affected_rows < 1:
-        session.rollback() # TODO verificare se è necessario
+        session.rollback()
         logger.error(f"{affected_rows} matches were found for the given offer code.")
         return task.complete(global_variables={'offer_code_validity': False, 'user_communication_code': user_communication_code})
 
