@@ -4,6 +4,7 @@ from pymongo import MongoClient
 
 from camundaworkers.logger import get_logger
 
+
 def register_interest(task: ExternalTask) -> TaskResult:
     logger = get_logger()
     logger.info("register_interest")

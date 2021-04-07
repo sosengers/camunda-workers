@@ -16,8 +16,8 @@ def save_last_minute_offers(task: ExternalTask) -> TaskResult:
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
     flights_dict = json.loads(task.get_variable("offers"))
-
-    flights = [Flight.from_dict(f, "URL DA CAMBIARE") for f in flights_dict] # TODO: capire quale compagnia aerea mi ha contattato
+    company_name = str(task.get_variable("company_name"))
+    flights = [Flight.from_dict(f, company_name) for f in flights_dict]
 
     try:
         session.add_all(flights)

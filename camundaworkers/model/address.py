@@ -35,3 +35,6 @@ class Address:
             "zip_code": self.zip_code,
             "country": self.country
         }
+
+    def __str__(self):
+        return f"{self.street} {self.number}, {self.city}, {self.zip_code}, {self.country}"

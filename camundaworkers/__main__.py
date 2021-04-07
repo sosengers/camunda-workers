@@ -38,10 +38,6 @@ def main():
     Base.metadata.create_all(create_sql_engine())
     Base.metadata.create_all(create_sql_engine())
 
-    logger.info("Connecting to rabbit")
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
-    connection.close()
-    logger.info("Connected to rabbit was successful")
     executor = ThreadPoolExecutor(max_workers=len(TOPICS), thread_name_prefix="ACMESky-Backend")
     for index, topic_handler in enumerate(TOPICS):
         topic = topic_handler[0]
