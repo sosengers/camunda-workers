@@ -37,6 +37,7 @@ def send_tickets(task: ExternalTask) -> TaskResult:
     offer_purchase_data = OfferPurchaseData.from_dict(json.loads(task.get_variable("offer_purchase_data")))
     session.query(OfferMatch).filter(OfferMatch.offer_code == offer_purchase_data.offer_code).update({"blocked": False},
                                                                                                      synchronize_session="fetch")
+    session.commit()
     """ TODO:
     to_delete = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_purchase_data.offer_code)
     session.delete(to_delete)
