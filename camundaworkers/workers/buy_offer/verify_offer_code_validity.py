@@ -1,3 +1,5 @@
+import datetime
+
 from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 from camundaworkers.model.flight import OfferMatch
 from camunda.external_task.external_task import ExternalTask, TaskResult
@@ -20,12 +22,14 @@ def verify_offer_code_validity(task: ExternalTask) -> TaskResult:
     session = Session()
 
     user_communication_code = str(hash(offer_purchase_data))
-    matches = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code, OfferMatch.blocked == True).all()
+    matches = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code,
+                                               OfferMatch.blocked == True).all()
     if len(matches) == 1:
         logger.error(f"Offer code is BLOCKED.")
         return task.complete(global_variables={'offer_code_validity': False, 'user_communication_code': user_communication_code})
 
-    affected_rows = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code).update({"blocked": True}, synchronize_session="fetch")
+    affected_rows = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code,
+                                                     OfferMatch.creation_date >= datetime.datetime.now() - datetime.timedelta(hours=24)).update({"blocked": True}, synchronize_session="fetch")
     if affected_rows < 1:
         session.rollback()
         logger.error(f"{affected_rows} matches were found for the given offer code.")

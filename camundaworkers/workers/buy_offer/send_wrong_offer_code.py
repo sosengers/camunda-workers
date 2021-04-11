@@ -18,7 +18,7 @@ def send_wrong_offer_code(task: ExternalTask) -> TaskResult:
     channel.queue_declare(queue=user_communication_code, durable=True)
 
     error = PurchaseProcessInformation(
-        message=f"Il codice offerta inserito non è valido.",
+        message="Il codice offerta inserito non è valido, è in uso da parte di un altro utente o sono passate più di 24 ore da quando è stato inviato.",
         is_error=True,
     )
 

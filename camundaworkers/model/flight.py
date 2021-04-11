@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, DateTime, Float, UniqueConstraint, Integer, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -38,6 +39,7 @@ class OfferMatch(Base):
     __tablename__ = 'offermatches'
 
     offer_code = Column(String(11), primary_key=True)
+    creation_date = Column(DateTime, default=datetime.now())
 
     outbound_flight_id = Column(Integer, ForeignKey("flights.id"))
     outbound_flight = relationship("Flight", primaryjoin=outbound_flight_id == Flight.id)
