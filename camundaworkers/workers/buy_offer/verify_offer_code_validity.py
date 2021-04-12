@@ -29,7 +29,7 @@ def verify_offer_code_validity(task: ExternalTask) -> TaskResult:
         return task.complete(global_variables={'offer_code_validity': False, 'user_communication_code': user_communication_code})
 
     affected_rows = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code,
-                                                     OfferMatch.creation_date >= datetime.datetime.now() - datetime.timedelta(hours=24)).update({"blocked": True}, synchronize_session="fetch")
+                                                     OfferMatch.creation_date >= datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(hours=24)).update({"blocked": True}, synchronize_session="fetch")
     if affected_rows < 1:
         session.rollback()
         logger.error(f"{affected_rows} matches were found for the given offer code.")
