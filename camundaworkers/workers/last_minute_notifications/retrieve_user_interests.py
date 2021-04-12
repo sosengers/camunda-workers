@@ -20,11 +20,13 @@ def retrieve_user_interests(task: ExternalTask) -> TaskResult:
                 "_id": "$prontogram_username",
                 "interests": {
                     "$addToSet": {
+                        "interest_id": "$_id",
                         "departure_airport_code": "$departure_airport_code",
                         "arrival_airport_code": "$arrival_airport_code",
                         "min_departure_date": "$min_departure_date",
                         "max_comeback_date": "$max_comeback_date",
-                        "max_price": "$max_price"
+                        "max_price": "$max_price",
+                        "offer_codes": "$offer_codes"
                     }
                 }
             }
@@ -36,6 +38,7 @@ def retrieve_user_interests(task: ExternalTask) -> TaskResult:
     for u in users:
         for i in u.get('interests'):
             i['max_price'] = str(i['max_price'])  # necessary since Camunda returns Java objects to be deserialized
+            i['interest_id'] = str(i['interest_id'])
 
     logger.info(f"There are {len(users)} users to be checked")
     return task.complete(global_variables={"users": users})
