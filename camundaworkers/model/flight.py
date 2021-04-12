@@ -34,6 +34,18 @@ class Flight(Base):
         UniqueConstraint('flight_code', 'departure_datetime'),
     )
 
+    def __str__(self) -> str:
+        return f"""Flight(
+                id: {self.id}, 
+                flight_code: {self.flight_code}, 
+                departure_airport_code: {self.departure_airport_code},
+                arrival_airport_code: {self.arrival_airport_code},
+                cost: {self.cost}, 
+                departure_datetime: {self.departure_datetime}, 
+                arrival_datetime: {self.arrival_datetime}, 
+                flight_company_name: {self.flight_company_name}
+                )"""
+
 
 class OfferMatch(Base):
     __tablename__ = 'offermatches'
