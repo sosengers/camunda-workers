@@ -10,6 +10,7 @@ def register_interest(task: ExternalTask) -> TaskResult:
     logger.info("register_interest")
 
     interest = json.loads(task.get_variable("interest"))
+    interest["offer_codes"] = []
 
     username = "root"
     password = "password"
