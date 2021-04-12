@@ -19,7 +19,14 @@ def save_offers(task: ExternalTask) -> TaskResult:
     session = Session()
 
     company_url = task.get_variable('company')
-    today_flights = [Flight.from_dict(flight_json, company_url) for flight_json in loads(task.get_variable('offers'))]
+    # Workaround: Camunda string global variables can hold maximum 4000 chars per string.
+    # Therefore we must concatenate the dumped strings.
+    offers_packets = int(task.get_variable('offers_packets'))
+    offers = ""
+    for packet in range(offers_packets):
+        offers += task.get_variable(f'offers_{packet}')
+    
+    today_flights = [Flight.from_dict(flight_json, company_url) for flight_json in loads(offers)]
 
     try:
         session.add_all(today_flights)
