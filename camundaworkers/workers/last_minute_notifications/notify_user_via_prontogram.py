@@ -10,15 +10,16 @@ def notify_user_via_prontogram(task: ExternalTask) -> TaskResult:
     logger.info("notify_user_via_prontogram")
 
     offer_codes = json.loads(task.get_variable("offer_codes"))
+    offer_infos = json.loads(task.get_variable("offer_infos"))
     prontogram_username = str(task.get_variable("prontogram_username"))[1:-1] # '' are added at the beggin and at the end of the pg_username, [1:-1] removes them
     logger.info(f"prontogram username: {prontogram_username}")
     logger.info(f"offer codes: {offer_codes}")
 
-    for offer_code in offer_codes:
+    for offer_code, offer_info in zip(offer_codes, offer_infos):
         prontogram_message = {
             "sender": "ACMESky",
             "receiver": prontogram_username,
-            "body": f"Il tuo codice offerta è: {offer_code}. Affrettati, sarà valido per sole 24 ore!"
+            "body": f"ACMESky ha trovato per te la seguente offerta:\n{offer_info}\nInserisci il codice offerta {offer_code} sul sito di ACMESky per poterne usufruire. Affrettati, sarà valido per sole 24 ore!"
         }
 
         #logger.info(json.dumps(prontogram_message))
