@@ -15,6 +15,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import DatabaseError
 
 from pymongo import MongoClient
+from bson import ObjectId
 
 
 def check_offers_presence(task: ExternalTask) -> TaskResult:
@@ -76,8 +77,12 @@ def check_offers_presence(task: ExternalTask) -> TaskResult:
                     previous_matches = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code).all()
                     if len(previous_matches) == 0:
                         session.add(new_match)
+                    logger.info(f"(BEFORE) offer_codes: {interest['offer_codes']}")
                     interest["offer_codes"].append(offer_code)
-                    interests_collection.update_one({"_id": interest.get("interest_id")}, {"$set": {"offer_codes": interest.get("offer_codes")}})
+                    logger.info(f"(AFTER ) offer_codes: {interest['offer_codes']}")
+                    update_result = interests_collection.update_one({"_id": ObjectId(interest.get("interest_id"))}, {"$set": {"offer_codes": interest.get("offer_codes")}})
+                    logger.info(f"UPDATE RESULT: {update_result.raw_result}")
+
                     offer_codes.append(offer_code)
                     offer_infos.append(
                         f"""
