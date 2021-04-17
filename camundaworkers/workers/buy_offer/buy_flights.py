@@ -28,11 +28,11 @@ def buy_flights(task: ExternalTask) -> TaskResult:
         "flight_requests": [
             {
                 "flight_id": offer_match.outbound_flight.flight_code,
-                "date": offer_match.outbound_flight.departure_datetime.strftime("%Y-%m-%d")
+                "date": offer_match.outbound_flight.departure_datetime.strftime("%Y-%m-%dT%H:%M:%S.000Z")
             },
             {
                 "flight_id": offer_match.comeback_flight.flight_code,
-                "date": offer_match.comeback_flight.departure_datetime.strftime("%Y-%m-%d")
+                "date": offer_match.comeback_flight.departure_datetime.strftime("%Y-%m-%dT%H:%M:%S.000Z")
             }
         ]
     }
@@ -49,6 +49,7 @@ def buy_flights(task: ExternalTask) -> TaskResult:
     total_amount = offer_match.comeback_flight.cost + offer_match.outbound_flight.cost
 
     tickets = {
+        "communication_code": str(task.get_variable("user_communication_code")),
         "flights": {
             "outbound": {
                 "flight_code": offer_match.outbound_flight.flight_code,

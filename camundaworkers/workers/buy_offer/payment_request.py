@@ -61,7 +61,8 @@ def payment_request(task: ExternalTask) -> TaskResult:
     channel = connection.channel()
     channel.queue_declare(queue=user_communication_code, durable=True)
 
-    purchase_url = PurchaseProcessInformation(message=str(payment_creation_response.get('redirect_page')))
+    purchase_url = PurchaseProcessInformation(message=str(payment_creation_response.get('redirect_page')),
+                                              communication_code=user_communication_code)
 
     channel.basic_publish(
         exchange="",

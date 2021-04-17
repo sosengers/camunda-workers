@@ -19,6 +19,7 @@ def send_wrong_offer_code(task: ExternalTask) -> TaskResult:
 
     error = PurchaseProcessInformation(
         message="Il codice offerta inserito non è valido, è in uso da parte di un altro utente o sono passate più di 24 ore da quando è stato inviato.",
+        communication_code=user_communication_code,
         is_error=True,
     )
 

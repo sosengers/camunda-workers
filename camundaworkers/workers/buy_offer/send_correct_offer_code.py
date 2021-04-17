@@ -14,7 +14,8 @@ def send_correct_offer_code(task: ExternalTask) -> TaskResult:
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
     channel = connection.channel()
     channel.queue_declare(queue=user_communication_code, durable=True)
-    success = PurchaseProcessInformation(message=f"Il codice offerta inserito è valido.")
+    success = PurchaseProcessInformation(message=f"Il codice offerta inserito è valido.",
+                                         communication_code=user_communication_code)
 
     channel.basic_publish(
         exchange="",

@@ -32,14 +32,16 @@ def book_transfer(task: ExternalTask) -> TaskResult:
     wsdl_url = travel_company_to_contact.get("company").replace(":8080", ":8000") + "/travel_company.wsdl"
     soap_client = Client(wsdl=wsdl_url)
 
-    departure_transfer_datetime = offer_match.outbound_flight.departure_datetime - timedelta(hours=2)
+    outbound_departure_transfer_datetime = offer_match.outbound_flight.departure_datetime - timedelta(hours=4)
+    comeback_arrival_transfer_datetime = offer_match.comeback_flight.arrival_datetime + timedelta(minutes=10)
+
     try:
         soap_response = soap_client.service.buyTransfers(
-            departure_transfer_datetime=departure_transfer_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            departure_transfer_datetime=outbound_departure_transfer_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
             customer_address=str(offer_purchase_data.address),
             airport_code=offer_match.outbound_flight.departure_airport_code,
             customer_name=f"{offer_purchase_data.name} {offer_purchase_data.surname}",
-            arrival_transfer_datetime=offer_match.outbound_flight.departure_datetime.strftime("%Y-%m-%dT%H:%M:%S"))
+            arrival_transfer_datetime=comeback_arrival_transfer_datetime.strftime("%Y-%m-%dT%H:%M:%S"))
         tickets["transfers"] = [soap_response]
         return task.complete(global_variables={"tickets": json.dumps(tickets)})
     except Fault:

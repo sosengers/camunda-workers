@@ -18,6 +18,7 @@ def send_wrong_payment_status(task: ExternalTask) -> TaskResult:
 
     error = PurchaseProcessInformation(
         message="Il processo di acquisto è fallito. Riprova nuovamente.",
+        communication_code=user_communication_code,
         is_error=True,
     )
 
