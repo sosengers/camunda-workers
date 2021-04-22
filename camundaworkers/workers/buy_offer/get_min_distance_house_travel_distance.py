@@ -11,6 +11,11 @@ import json
 
 
 def get_min_distance_house_travel_distance(task: ExternalTask) -> TaskResult:
+    """
+    Get the distance between the user's house and q travel company
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("get_min_distance_house_travel_distance")
 

@@ -5,6 +5,11 @@ import json
 
 
 def check_distance_for_transfer_booking(task: ExternalTask) -> TaskResult:
+    """
+    Check if the user can have access to the transfer bundle
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("check_distance_for_transfer_booking")
 

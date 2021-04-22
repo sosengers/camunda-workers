@@ -14,6 +14,11 @@ from datetime import timedelta
 
 
 def book_transfer(task: ExternalTask) -> TaskResult:
+    """
+    Contact the chosen Travel Company and requesto to book a travel using the SOAP protocol
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("get_min_distance_house_travel_distance")
 
@@ -22,13 +27,18 @@ def book_transfer(task: ExternalTask) -> TaskResult:
     offer_purchase_data = OfferPurchaseData.from_dict(json.loads(task.get_variable("offer_purchase_data")))
     tickets = json.loads(str(task.get_variable("tickets")))
 
+    """ Connect to PostgreSQL to get the offer match information
+    """
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
-
     offer_match: OfferMatch = session.query(OfferMatch).get({"offer_code": offer_purchase_data.offer_code})
 
+    """ Identify the Travel Company to contact choosing the one at the minimum distance from the user's home
+    """
     travel_company_to_contact = min(distances, key=lambda tc: tc.get("distance"))
 
+    """ Create the SOAP Client and the datetime when then transfer will be booked for
+    """
     wsdl_url = travel_company_to_contact.get("company").replace(":8080", ":8000") + "/travel_company.wsdl"
     soap_client = Client(wsdl=wsdl_url)
 

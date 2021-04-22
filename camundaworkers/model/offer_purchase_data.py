@@ -10,6 +10,11 @@ class OfferPurchaseData:
 
     @staticmethod
     def from_dict(data: dict):
+        """
+        Create a new OfferPurchaseData from a dictionary, useful when the purchase data are in a string in JSON format
+        :param data: dictionary which contains the data to create the OfferPurchaseData object
+        :return: an OfferPurchaseData object
+        """
         return OfferPurchaseData(
             offer_code=data.get("offer_code"),
             name=data.get("name"),
@@ -18,6 +23,10 @@ class OfferPurchaseData:
         )
 
     def to_dict(self):
+        """
+        Convert teh object into a dictionary
+        :return: a dictionary which contains the object's data
+        """
         return {
             "offer_code":self.offer_code,
             "name" : self.name,
@@ -29,6 +38,10 @@ class OfferPurchaseData:
         return self.offer_code, self.name, self.surname, self.address
 
     def __hash__(self):
+        """
+        Custom hash function to generate a reproducible hash
+        :return: an hash string
+        """
         return hash((self.offer_code,
                      self.name,
                      self.surname,

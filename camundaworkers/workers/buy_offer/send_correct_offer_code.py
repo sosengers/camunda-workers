@@ -6,11 +6,18 @@ from camundaworkers.logger import get_logger
 
 
 def send_correct_offer_code(task: ExternalTask) -> TaskResult:
+    """
+    Send to the user the confirmation that the offer code inserted is valid
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("send_correct_offer_code")
 
     user_communication_code = str(task.get_variable("user_communication_code"))
 
+    """ Connect to RabbitMQ and publish the message
+    """
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
     channel = connection.channel()
     channel.queue_declare(queue=user_communication_code, durable=True)

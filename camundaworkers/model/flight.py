@@ -11,8 +11,15 @@ class Flight(Base):
 
     @staticmethod
     def from_dict(flight_dict: dict, flight_company: str):
+        """
+        Create a Flight object starting from data contained in a dictionary and specifying the Flight Company, used
+        when one or more flights are got from a Flight Company
+        :param flight_dict: a dictionary which contains the flight data
+        :param flight_company: the flight company from which this flight comes from
+        :return: a Flight object
+        """
         return Flight(
-            flight_code=flight_dict.get('flight_id'),  # TODO sostituire nel JSON la chiave flight_id con flight_code
+            flight_code=flight_dict.get('flight_id'),
             departure_airport_code=flight_dict.get('departure_airport_code'),
             arrival_airport_code=flight_dict.get('arrival_airport_code'),
             cost=flight_dict.get('cost'),
@@ -76,4 +83,9 @@ class PaymentTransaction(Base):
 
     @staticmethod
     def from_dict(data):
+        """
+        Create a PaymentTransaction starting from a dictionary
+        :param data: dictionary which contains the data to create the PyamentTransaction
+        :return: a new PaymentTransaction object
+        """
         return PaymentTransaction(transaction_id=data.get("transaction_id"), status=data.get("status"))

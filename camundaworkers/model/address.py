@@ -8,6 +8,11 @@ class Address:
 
     @staticmethod
     def from_dict(data: dict):
+        """
+        Build an Address from a dictionary, useful when the Address is in string in JSON format
+        :param data: a dictionary which contains the data to build an Address
+        :return: a new Address object
+        """
         return Address(
             street=data.get('street'),
             number=data.get('number'),
@@ -17,7 +22,7 @@ class Address:
         )
 
     def __key(self):
-        return (self.street, self.number, self.city, self.zip_code, self.country)
+        return self.street, self.number, self.city, self.zip_code, self.country
 
     def __hash__(self):
         return hash(self.__key())
@@ -28,6 +33,10 @@ class Address:
         return NotImplemented
 
     def to_dict(self):
+        """
+        Convert the data saved in the object into a dictionary, useful to convert it into a string in JSON format
+        :return: a dictionary containing the address information
+        """
         return {
             "street": self.street,
             "number": self.number,

@@ -4,6 +4,11 @@ from camundaworkers.logger import get_logger
 
 
 def verify_condition_for_travel_booking(task: ExternalTask) -> TaskResult:
+    """
+    Verify the price condition for the transfer bundle
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("verify_condition_for_travel_booking")
 

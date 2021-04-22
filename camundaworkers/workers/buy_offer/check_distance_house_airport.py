@@ -14,17 +14,26 @@ from camundaworkers.logger import get_logger
 
 
 def check_distance_house_airport(task: ExternalTask) -> TaskResult:
+    """
+    Check if the distance (got contacting the Geographical Distance service) is congruent with the transfer bundle
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("check_distance_house_airport")
 
     GEOGRAPHICAL_DISTACE_SERVICE = environ.get("GEOGRAPHICAL_DISTACE_SERVICE", "http://geographical_distances:8080")
 
     offer_purchase_data = OfferPurchaseData.from_dict(json.loads(task.get_variable("offer_purchase_data")))
+
+    """ Connect to postgreSQL and get the offer purchased
+    """
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
-
     offer_match: OfferMatch = session.query(OfferMatch).get({"offer_code": offer_purchase_data.offer_code})
 
+    """ Find the name (used for the airport) of the departure airport
+    """
     airports_file = open("./camundaworkers/airports.csv", 'r')
     airports = csv.reader(airports_file)
     airport_address = None
@@ -33,6 +42,8 @@ def check_distance_house_airport(task: ExternalTask) -> TaskResult:
             airport_address = row[1]
     airports_file.close()
 
+    """ Failure case: the airport cannot be found in the CSV 
+    """
     if not airport_address:
         logger.error(f"Cannot find airport associated with: {offer_match.outbound_flight.departure_airport_code}")
         airport_address = "Venice Marco Polo Airport"

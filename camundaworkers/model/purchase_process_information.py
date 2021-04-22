@@ -5,6 +5,10 @@ class PurchaseProcessInformation:
         self.is_error = is_error
 
     def to_dict(self):
+        """
+        Convert the object to a dictionary
+        :return: a dictionary which contains the object's data
+        """
         message = {
             "message": self.message,
             "communication_code": self.communication_code,
