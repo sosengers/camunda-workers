@@ -5,15 +5,24 @@ from camundaworkers.logger import get_logger
 
 
 def retrieve_user_interests(task: ExternalTask) -> TaskResult:
+    """
+    Retrieve from MongoDB the interests related to a user
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("retrieve_user_interests")
 
+    """ Connect to MongoDB
+    """
     username = "root"
     password = "password"
     client = MongoClient(f"mongodb://{username}:{password}@acmesky_mongo:27017")
     acmesky_db = client['ACMESky']
     interests_collection = acmesky_db['interests']
 
+    """ Pipeline to perform the research and generate a clear dictionary with the data retrieved
+    """
     pipeline = [
         {
             "$group": {
@@ -37,7 +46,8 @@ def retrieve_user_interests(task: ExternalTask) -> TaskResult:
 
     for u in users:
         for i in u.get('interests'):
-            i['max_price'] = str(i['max_price'])  # necessary since Camunda returns Java objects to be deserialized
+            # necessary since Camunda returns Java objects to be deserialized
+            i['max_price'] = str(i['max_price'])
             i['interest_id'] = str(i['interest_id'])
 
     logger.info(f"There are {len(users)} users to be checked")

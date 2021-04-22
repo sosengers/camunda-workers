@@ -5,6 +5,11 @@ from json import dumps
 
 
 def get_flight_offers(task: ExternalTask) -> TaskResult:
+    """
+    Get the flights from a Flight Company
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("get_flight_offers")
 
@@ -13,6 +18,8 @@ def get_flight_offers(task: ExternalTask) -> TaskResult:
 
     new_flights = requests.get(url + "/flights/offers").json()
 
+    """ Workaround for Camunda limitation on the length of the string that can be saved as process variable 
+    """
     if new_flights == {}:
         logger.info("Empty json from flight company")
         return task.complete({'offers_0': dumps([]), 'offers_packets': 1})

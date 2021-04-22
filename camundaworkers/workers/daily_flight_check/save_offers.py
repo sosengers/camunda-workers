@@ -12,20 +12,30 @@ from json import loads
 
 
 def save_offers(task: ExternalTask) -> TaskResult:
+    """
+    Save on PostgreSQL the new flights received from a Flight Company
+    :param task: the current task instance
+    :return: the task result
+    """
     logger = get_logger()
     logger.info("save_offers")
 
+    """ Connect to PostgreSQL
+    """
     Session = sessionmaker(create_sql_engine())
     session = Session()
 
     company_url = task.get_variable('company')
-    # Workaround: Camunda string global variables can hold maximum 4000 chars per string.
-    # Therefore we must concatenate the dumped strings.
+    """ Workaround: Camunda string global variables can hold maximum 4000 chars per string.
+        Therefore we must concatenate the dumped strings.
+    """
     offers_packets = int(task.get_variable('offers_packets'))
     offers = ""
     for packet in range(offers_packets):
         offers += task.get_variable(f'offers_{packet}')
-    
+
+    """ Flight to save on the database
+    """
     today_flights = [Flight.from_dict(flight_json, company_url) for flight_json in loads(offers)]
 
     try:

@@ -10,7 +10,7 @@ from camundaworkers.workers.daily_flight_check.tasks import TASKS as daily_fligh
 from camundaworkers.workers.buy_offer.tasks import TASKS as buy_offer_TASKS
 
 from .model.flight import Base
-#from .model.flight import Base as offerBase
+# from .model.flight import Base as offerBase
 from .model.base import create_sql_engine
 
 from camundaworkers.logger import get_logger
@@ -32,18 +32,23 @@ def main():
     logger.info("Workers started")
     BASE_URL = "http://camunda_acmesky:8080/engine-rest"
 
+    """ Topics associated to the tasks
+    """
     TOPICS = register_user_interest_TASKS + last_minute_notifications_TASKS + daily_fligh_check_TASKS + buy_offer_TASKS
 
     # Setup PostgreSQL
     Base.metadata.create_all(create_sql_engine())
     Base.metadata.create_all(create_sql_engine())
 
+    """ Creation and execution of different thread, one per worker/topic
+    """
     executor = ThreadPoolExecutor(max_workers=len(TOPICS), thread_name_prefix="ACMESky-Backend")
     for index, topic_handler in enumerate(TOPICS):
         topic = topic_handler[0]
         handler_func = topic_handler[1]
         executor.submit(ExternalTaskWorker(worker_id=index, base_url=BASE_URL, config=default_config).subscribe, topic,
                         handler_func)
+
 
 if __name__ == '__main__':
     main()
