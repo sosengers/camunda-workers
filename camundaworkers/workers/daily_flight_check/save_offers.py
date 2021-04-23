@@ -20,30 +20,29 @@ def save_offers(task: ExternalTask) -> TaskResult:
     logger = get_logger()
     logger.info("save_offers")
 
-    """ Connect to PostgreSQL
-    """
+    # Connecting to PostgreSQL
     Session = sessionmaker(create_sql_engine())
     session = Session()
 
     company_url = task.get_variable('company')
-    """ Workaround: Camunda string global variables can hold maximum 4000 chars per string.
-        Therefore we must concatenate the dumped strings.
+    """
+    Workaround: Camunda string global variables can hold maximum 4000 chars per string.
+    Therefore we must concatenate the dumped strings.
     """
     offers_packets = int(task.get_variable('offers_packets'))
     offers = ""
     for packet in range(offers_packets):
         offers += task.get_variable(f'offers_{packet}')
 
-    """ Flight to save on the database
-    """
-    today_flights = [Flight.from_dict(flight_json, company_url) for flight_json in loads(offers)]
+    # Flights to save on the database
+    todays_flights = [Flight.from_dict(flight_json, company_url) for flight_json in loads(offers)]
 
     try:
-        session.add_all(today_flights)
+        session.add_all(todays_flights)
         session.commit()
-        logger.info(f"Added {len(today_flights)} flights to acmesky_db from {company_url}")
+        logger.info(f"Added {len(todays_flights)} flights to acmesky_db from {company_url}")
     except DatabaseError:
-        logger.warn(f"Database error while inserting {len(today_flights)} from {company_url}")
+        logger.warn(f"Database error while inserting {len(todays_flights)} from {company_url}")
         return task.bpmn_error(error_code='offer_saving_failed',
                                error_message='Error inserting rows in the database')
 
