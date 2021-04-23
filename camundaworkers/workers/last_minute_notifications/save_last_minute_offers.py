@@ -11,22 +11,20 @@ from camundaworkers.logger import get_logger
 
 def save_last_minute_offers(task: ExternalTask) -> TaskResult:
     """
-    Save on PostgreSQL the new flights received from a Flight Company
+    Saves the new flights received from a Flight Company on PostgreSQL
     :param task: the current task instance
     :return: the task result
     """
     logger = get_logger()
     logger.info("save_last_minute_offers")
 
-    """ Connect to PostgreSQL
-    """
+    # Connects to PostgreSQL
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
     flights_dict = json.loads(task.get_variable("offers"))
     company_name = str(task.get_variable("company_name"))
 
-    """ Create the list of flights to save 
-    """
+    # Creates the list of flights to save
     flights = [Flight.from_dict(f, company_name) for f in flights_dict]
 
     try:

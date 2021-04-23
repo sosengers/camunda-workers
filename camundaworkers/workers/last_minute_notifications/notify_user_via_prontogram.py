@@ -7,7 +7,7 @@ from camundaworkers.logger import get_logger
 
 def notify_user_via_prontogram(task: ExternalTask) -> TaskResult:
     """
-    For each offer codes send a message to the related ProntoGram user
+    For each offer code, sends a message to the related ProntoGram user.
     :param task: the current task instance
     :return: the task result
     """
@@ -16,8 +16,8 @@ def notify_user_via_prontogram(task: ExternalTask) -> TaskResult:
 
     offer_codes = json.loads(task.get_variable("offer_codes"))
     offer_infos = json.loads(task.get_variable("offer_infos"))
-    prontogram_username = str(task.get_variable("prontogram_username"))[
-                          1:-1]  # '' are added at the beggin and at the end of the pg_username, [1:-1] removes them
+    # Quotes are added at the beginning and end of the pg_username, [1:-1] removes them.
+    prontogram_username = str(task.get_variable("prontogram_username"))[1:-1]
     logger.info(f"prontogram username: {prontogram_username}")
     logger.info(f"offer codes: {offer_codes}")
 
