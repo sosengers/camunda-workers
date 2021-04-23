@@ -5,7 +5,7 @@ from camundaworkers.model.flight import Flight
 
 def departure_match_offer_interest(offer: Flight, interest) -> bool:
     """
-    Chek if the offers match the departure part of the interest
+    Checks if the offers match the departure part of the interest.
     :param offer: a flight offer
     :param interest: an user interest
     :return: true if the offer match the departure part of the interest
@@ -29,7 +29,7 @@ def departure_match_offer_interest(offer: Flight, interest) -> bool:
 
 def comeback_match_offer_interest(offer: Flight, interest) -> bool:
     """
-    Chek if the offers match the comeback part of the interest
+    Checks if the offers match the comeback part of the interest.
     :param offer: a flight offer
     :param interest: an user interest
     :return: ture if the offer match the comeback part of the interest

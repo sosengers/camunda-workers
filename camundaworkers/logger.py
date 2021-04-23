@@ -4,7 +4,7 @@ from threading import get_ident
 
 def get_logger():
     """
-    Create a logger for the different workers, it check if already exists
+    Creates a logger for the different workers, it checks if it already exists.
     :return: a new logger if it does not exist, the existing logger otherwise
     """
     logger = logging.getLogger(str(get_ident()))

@@ -10,11 +10,9 @@ from camundaworkers.workers.daily_flight_check.tasks import TASKS as daily_fligh
 from camundaworkers.workers.buy_offer.tasks import TASKS as buy_offer_TASKS
 
 from .model.flight import Base
-# from .model.flight import Base as offerBase
 from .model.base import create_sql_engine
 
 from camundaworkers.logger import get_logger
-import pika
 
 # configuration for the Client
 default_config = {
@@ -38,9 +36,9 @@ def main():
 
     # Setup PostgreSQL
     Base.metadata.create_all(create_sql_engine())
-    Base.metadata.create_all(create_sql_engine())
 
-    """ Creation and execution of different thread, one per worker/topic
+    """
+    Creation and execution of different threads, one per worker/topic
     """
     executor = ThreadPoolExecutor(max_workers=len(TOPICS), thread_name_prefix="ACMESky-Backend")
     for index, topic_handler in enumerate(TOPICS):
