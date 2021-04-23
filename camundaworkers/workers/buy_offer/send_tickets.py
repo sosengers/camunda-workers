@@ -13,7 +13,7 @@ from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 
 def send_tickets(task: ExternalTask) -> TaskResult:
     """
-    Send the tickets to the user
+    Sends the tickets to the user
     :param task: the current task instance
     :return: the task result
     """
@@ -24,8 +24,7 @@ def send_tickets(task: ExternalTask) -> TaskResult:
     tickets = str(task.get_variable("tickets"))
     logger.info(f"Tickets: {tickets}")
 
-    """ Connect to RabbitMQ and publish the ticket
-    """
+    # Connects to RabbitMQ and publish the ticket
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
     channel = connection.channel()
     channel.queue_declare(queue=user_communication_code, durable=True)
@@ -39,14 +38,16 @@ def send_tickets(task: ExternalTask) -> TaskResult:
 
     connection.close()
 
-    """ Connect to postgreSQL and delete the offer purchased
-        During the testing phase the code is rehabilitated
+    """
+    Connects to PostgreSQL and deletes the purchased offer.
+    TODO: remove lines 47-51.
     """
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
     offer_purchase_data = OfferPurchaseData.from_dict(json.loads(task.get_variable("offer_purchase_data")))
-    session.query(OfferMatch).filter(OfferMatch.offer_code == offer_purchase_data.offer_code).update({"blocked": False},
-                                                                                                     synchronize_session="fetch")
+    session.query(OfferMatch)\
+        .filter(OfferMatch.offer_code == offer_purchase_data.offer_code)\
+        .update({"blocked": False}, synchronize_session="fetch")
     session.commit()
     """ TODO:
     to_delete = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_purchase_data.offer_code)

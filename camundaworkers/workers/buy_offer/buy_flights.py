@@ -12,7 +12,7 @@ import json
 
 def buy_flights(task: ExternalTask) -> TaskResult:
     """
-    Contact the Flight Company and buy the tickets related to the offer purchased
+    Contacts the Flight Company and buys the tickets related to the offer purchased.
     :param task: the current task instance
     :return: the task result
     """
@@ -24,12 +24,12 @@ def buy_flights(task: ExternalTask) -> TaskResult:
 
     logger.info("Offer code used:" + offer_code)
 
-    """ Connect to PostgreSQL and get the purchased offer
-    """
+    # Connects to PostgreSQL and gets the purchased offer
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
     offer_match: OfferMatch = session.query(OfferMatch).get({"offer_code": offer_code})
 
+    # Buying the outbound and comeback tickets through the flight company API.
     request = {
         "flight_requests": [
             {

@@ -12,7 +12,7 @@ import json
 
 def verify_offer_code_validity(task: ExternalTask) -> TaskResult:
     """
-    Verify that the offer code is valid, not expired and not already in use by another user
+    Verifies that the offer code is valid, not expired and not already in use by another user.
     :param task: the current task instance
     :return: the task result
     """
@@ -23,22 +23,20 @@ def verify_offer_code_validity(task: ExternalTask) -> TaskResult:
 
     offer_code = offer_purchase_data.offer_code
 
-    """ Connect to postgreSQL
-    """
+    # Connects to PostgreSQL
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
 
     user_communication_code = str(hash(offer_purchase_data))
-    """ Check if the offer matched is blocked
-    """
+
+    # Checks if the offer matched is blocked
     matches = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code,
                                                OfferMatch.blocked == True).all()
     if len(matches) == 1:
         logger.error(f"Offer code is BLOCKED.")
         return task.complete(global_variables={'offer_code_validity': False, 'user_communication_code': user_communication_code})
 
-    """ Check if the offer match is not expired and set it to blocked=True
-    """
+    # Checks if the offer match is not expired and sets it to blocked=True.
     affected_rows = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code,
                                                      OfferMatch.creation_date >= datetime.datetime.now(tz=datetime.timezone.utc) - datetime.timedelta(hours=24)).update({"blocked": True}, synchronize_session="fetch")
     if affected_rows < 1:

@@ -15,7 +15,7 @@ from os import environ
 
 def payment_request(task: ExternalTask) -> TaskResult:
     """
-    Request for a new payment session to the Payment Provider
+    Requests for a new payment session to the Payment Provider.
     :param task: the current task instance
     :return: the task result
     """
@@ -30,22 +30,20 @@ def payment_request(task: ExternalTask) -> TaskResult:
 
     offer_code = offer_purchase_data.offer_code
 
-    """ Connect to postgreSQL and get the offer the user want to purchase
-    """
+    # Connecting to postgreSQL and getting the offer the user wants to purchase
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
     offer_match = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code,
                                                    OfferMatch.blocked == True).first()
 
-    # affected_rows == 1 per precondizione.
+    # affected_rows == 1 by hypothesis.
     outbound_flight_id = offer_match.outbound_flight_id
     comeback_flight_id = offer_match.comeback_flight_id
 
     outbound_flight = session.query(Flight).filter(Flight.id == outbound_flight_id).first()
     comeback_flight = session.query(Flight).filter(Flight.id == comeback_flight_id).first()
 
-    """ Send the payment request generation to the Payment Provider and get back the URL to send to the user
-    """
+    # Sends the payment request generation to the Payment Provider and get back the URL to send to the user.
     payment_request_to_send = {
         "amount": outbound_flight.cost + comeback_flight.cost,
         "payment_receiver": "ACMESky",
@@ -55,20 +53,17 @@ def payment_request(task: ExternalTask) -> TaskResult:
     payment_creation_response = requests.post(payment_provider_url + "/payments/request",
                                               json=payment_request_to_send).json()
 
-    """ Create a payment transaction
-    """
+    # Creates a payment transaction
     payment_tx = PaymentTransaction(transaction_id=payment_creation_response.get('transaction_id'))
     session.add(payment_tx)
     session.commit()
 
-    """ Connect to Redis and relate the transaction id to the process instance id 
-    """
+    # Connects to Redis and relate the transaction id to the process instance id
     redis_connection = Redis(host="acmesky_redis", port=6379, db=0)
     redis_connection.set(payment_creation_response.get('transaction_id'), task.get_process_instance_id())
     redis_connection.close()
 
-    """ Connect to RabbitMQ and communicate to the user the payment URL
-    """
+    # Connects to RabbitMQ and communicate to the user the payment URL
     connection = pika.BlockingConnection(pika.ConnectionParameters(host="acmesky_mq"))
     channel = connection.channel()
     channel.queue_declare(queue=user_communication_code, durable=True)

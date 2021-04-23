@@ -1,5 +1,4 @@
 from camundaworkers.model.purchase_process_information import PurchaseProcessInformation
-from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 from camunda.external_task.external_task import ExternalTask, TaskResult
 import pika
 import json
@@ -8,7 +7,7 @@ from camundaworkers.logger import get_logger
 
 def send_wrong_offer_code(task: ExternalTask) -> TaskResult:
     """
-    Notify to the user that the code is invalid, expired or already in use
+    Notifies the user that the code is invalid, expired or already in use.
     :param task: the current task instance
     :return: the task result
     """
@@ -17,8 +16,7 @@ def send_wrong_offer_code(task: ExternalTask) -> TaskResult:
 
     user_communication_code = str(task.get_variable("user_communication_code"))
 
-    """ Connect to RabbitMQ and publish the message
-    """
+    # Connects to RabbitMQ and publishes the message
     connection = pika.BlockingConnection(pika.ConnectionParameters("acmesky_mq"))
     channel = connection.channel()
 

@@ -10,8 +10,8 @@ from camundaworkers.model.offer_purchase_data import OfferPurchaseData
 
 def rehabilitation_offer_code(task: ExternalTask) -> TaskResult:
     """
-    Compensation task: if the verification offer code and payment sub process fail, this task rehabilitate the offer
-    code for another try
+    Compensation task: if the verification offer code and payment sub process fail, this task rehabilitates the offer
+    code for another try.
     :param task: the current task instance
     :return: the task result
     """
@@ -22,13 +22,13 @@ def rehabilitation_offer_code(task: ExternalTask) -> TaskResult:
 
     offer_code = offer_purchase_data.offer_code
 
-    """ Connect to postgreSQL
-    """
+    # Connects to postgreSQL
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
 
-    """ Get from the DB the offer match that has to be rehabilitate
-        The offer match is the one blocked and with offer_code equal to the process offer_code variable
+    """
+    Gets the offer match that has to be rehabilitated from the DB.
+    The offer match is the one blocked and with offer_code equal to the process offer_code variable.
     """
     affected_rows = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_code).update({"blocked": False},
                                                                                                  synchronize_session="fetch")

@@ -7,7 +7,7 @@ from camundaworkers.logger import get_logger
 
 def send_timeout_request_payment(task: ExternalTask) -> TaskResult:
     """
-    Notify to the user that the request payment is timed out
+    Notifies the user that the request payment has timed out.
     :param task: the current task instance
     :return: the task result
     """
@@ -16,8 +16,7 @@ def send_timeout_request_payment(task: ExternalTask) -> TaskResult:
 
     user_communication_code = str(task.get_variable("user_communication_code"))
 
-    """ Connect to RabbitMQ and publish the message
-    """
+    # Connects to RabbitMQ and publishes the message
     connection = pika.BlockingConnection(pika.ConnectionParameters("acmesky_mq"))
     channel = connection.channel()
 

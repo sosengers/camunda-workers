@@ -9,7 +9,7 @@ import json
 
 def verify_payment_status(task: ExternalTask) -> TaskResult:
     """
-    Verify the payment status sent by the Payment Provider
+    Verifies the payment status sent by the Payment Provider.
     :param task: the current task instance
     :return: the task result
     """
@@ -18,14 +18,12 @@ def verify_payment_status(task: ExternalTask) -> TaskResult:
 
     offer_purchase_data = PaymentTransaction.from_dict(json.loads(task.get_variable("payment_status")))
 
-    """ Check the payment status
-    """
+    # Checks the payment status
     if not offer_purchase_data.status:
         logger.error(f"The transaction {offer_purchase_data.transaction_id} was not completed.")
         return task.complete(global_variables={'payment_status_validity': False})
 
-    """ Connect to postgreSQL and update the PaymentTransaction status
-    """
+    # Connects to PostgreSQL and update the PaymentTransaction status
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
 

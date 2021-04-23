@@ -7,7 +7,7 @@ from camundaworkers.logger import get_logger
 
 def send_wrong_payment_status(task: ExternalTask) -> TaskResult:
     """
-    Notify to the user that the payment is timed out
+    Notifies the user that the payment has timed out.
     :param task: the current task instance
     :return: the task result
     """
@@ -16,8 +16,7 @@ def send_wrong_payment_status(task: ExternalTask) -> TaskResult:
 
     user_communication_code = str(task.get_variable("user_communication_code"))
 
-    """ Connect to RabbitMQ and publish the message
-    """
+    # Connect to RabbitMQ and publish the message
     connection = pika.BlockingConnection(pika.ConnectionParameters("acmesky_mq"))
     channel = connection.channel()
 

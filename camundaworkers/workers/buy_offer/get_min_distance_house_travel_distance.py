@@ -12,7 +12,7 @@ import json
 
 def get_min_distance_house_travel_distance(task: ExternalTask) -> TaskResult:
     """
-    Get the distance between the user's house and q travel company
+    Gets the distance between the user's house and a travel company.
     :param task: the current task instance
     :return: the task result
     """
