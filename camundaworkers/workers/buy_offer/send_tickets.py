@@ -38,20 +38,15 @@ def send_tickets(task: ExternalTask) -> TaskResult:
 
     connection.close()
 
-    """
-    Connects to PostgreSQL and deletes the purchased offer.
-    TODO: remove lines 47-51.
-    """
+    # Connects to PostgreSQL and deletes the purchased offer.
     Session = sessionmaker(bind=create_sql_engine())
     session = Session()
     offer_purchase_data = OfferPurchaseData.from_dict(json.loads(task.get_variable("offer_purchase_data")))
-    session.query(OfferMatch)\
-        .filter(OfferMatch.offer_code == offer_purchase_data.offer_code)\
-        .update({"blocked": False}, synchronize_session="fetch")
-    session.commit()
-    """ TODO:
     to_delete = session.query(OfferMatch).filter(OfferMatch.offer_code == offer_purchase_data.offer_code)
     session.delete(to_delete)
+    # The following lines are commented (uncomment them and comment the previous two not to delete the offermatch from the database).
+    # session.query(OfferMatch)\
+    #     .filter(OfferMatch.offer_code == offer_purchase_data.offer_code)\
+    #     .update({"blocked": False}, synchronize_session="fetch")
     session.commit()
-    """
     return task.complete()
