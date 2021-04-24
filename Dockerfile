@@ -1,7 +1,7 @@
 FROM python:3.8.6
 
 RUN apt-get update && \
-    apt-get -y install netcat && \
+    apt-get -y install netcat dos2unix && \
     apt-get clean
 
 RUN mkdir camunda_diagram
@@ -16,5 +16,7 @@ COPY requirements.txt /usr/src/app/
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . /usr/src/app
+
+RUN dos2unix entrypoint.sh
 
 CMD ["./entrypoint.sh"]
