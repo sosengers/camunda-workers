@@ -23,7 +23,7 @@ def send_timeout_request_payment(task: ExternalTask) -> TaskResult:
     channel.queue_declare(queue=user_communication_code, durable=True)
 
     error = PurchaseProcessInformation(
-        message="Il processo di acquisto è stato interrotto perché sono passati più di 10 minuti dall'invio della richiesta. Riprova nuovamente.",
+        message="Il processo di acquisto è stato interrotto perché è passato troppo tempo dall'invio della richiesta. Riprova nuovamente.",
         communication_code=user_communication_code,
         is_error=True,
     )
