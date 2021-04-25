@@ -32,7 +32,7 @@ def comeback_match_offer_interest(offer: Flight, interest) -> bool:
     Checks if the offers match the comeback part of the interest.
     :param offer: a flight offer
     :param interest: an user interest
-    :return: ture if the offer match the comeback part of the interest
+    :return: true if the offer match the comeback part of the interest
     """
     # Al ritorno, considerando lo stessa interesse inserito dall'utente
 
@@ -50,3 +50,19 @@ def comeback_match_offer_interest(offer: Flight, interest) -> bool:
         return False
 
     return True
+
+def find_min_cost_flights_couple(outbound_flights: list, comeback_flights: list):
+    """
+    Returns the first couple of outbound and comeback flights that allows the user to travel.
+    :param outbound_flights: list of outbound flights
+    :param comeback_flights: list of comeback flights
+    :return: Flight, Flight if a couple is found; None, None otherwise
+    """
+    ordered_outbound_flights = sorted(outbound_flights, key=lambda flight: float(flight.cost))
+    ordered_comeback_flights = sorted(comeback_flights, key=lambda flight: float(flight.cost))
+    for outbound_flight in ordered_outbound_flights:
+        for comeback_flight in ordered_comeback_flights:
+            if outbound_flight.arrival_datetime < comeback_flight.departure_datetime \
+            and outbound_flight.flight_company_name == comeback_flight.flight_company_name:
+                return outbound_flight, comeback_flight
+    return None, None

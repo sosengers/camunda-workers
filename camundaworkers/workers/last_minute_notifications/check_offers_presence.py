@@ -1,3 +1,4 @@
+from datetime import date
 from camunda.external_task.external_task import ExternalTask, TaskResult
 import base64
 import javaobj.v2 as javaobj
@@ -74,14 +75,11 @@ def check_offers_presence(task: ExternalTask) -> TaskResult:
         # logger.info(f"comeback_flights: {comeback_flights}")
 
         if len(outbound_flights) > 0 and len(comeback_flights) > 0:
-            min_outbound_flight = min(outbound_flights, key=lambda flight: float(flight.cost))
-            min_comeback_flight = min(comeback_flights, key=lambda flight: float(flight.cost))
-            # logger.info(f"MIN outbound_flights: {min_outbound_flight.id}")
-            # logger.info(f"MIN comeback_flights: {min_comeback_flight.id}")
+            min_outbound_flight, min_comeback_flight = find_min_cost_flights_couple(outbound_flights, comeback_flights)
 
-            if (min_outbound_flight.cost + min_comeback_flight.cost) <= float(interest.get("max_price")):
+            if min_outbound_flight is not None and min_comeback_flight is not None and (min_outbound_flight.cost + min_comeback_flight.cost) <= float(interest.get("max_price")):
                 # Generating the offer code related to this offer match.
-                offer_code = sha256(f"{min_outbound_flight} - {min_comeback_flight}".encode()).hexdigest()[:10]
+                offer_code = sha256(f"{date.today().isoformat()} - {min_outbound_flight} - {min_comeback_flight}".encode()).hexdigest()[:10]
 
                 new_match = OfferMatch(
                     offer_code=offer_code,
